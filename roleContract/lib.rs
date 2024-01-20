@@ -15,10 +15,10 @@ mod roleContract {
         #[ink(constructor)]
         pub fn new() -> Self {
             let caller = Self::env().caller();
-            let mut rolesMap = Mapping::default();
-            rolesMap.insert(caller, &1);
+            let mut roles_map = Mapping::default();
+            roles_map.insert(caller, &1);
             Self {
-                roles: rolesMap,
+                roles: roles_map,
             }
         }
 
@@ -35,6 +35,17 @@ mod roleContract {
                 return Some("Moderator".to_string());
             }
             return Some("User".to_string());
+        }
+
+        #[ink(message)]
+        pub fn set_role(&mut self, user_id: AccountId, role: u8) {
+            let caller = Self::env().caller();
+            let caller_role = self.roles.get(caller);
+
+            if caller_role == Some(0) {
+                return;
+            }
+            self.roles.insert(user_id, &role);
         }
     }
 
